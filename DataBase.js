@@ -48,14 +48,15 @@ class DataBase {
 
     async loadConnection() {
     try {
-        // Si existe DATABASE_URL (Railway), úsala:
+        console.log(process.env.DATABASE_URL);
+        
+        // Inicializa el pool según entorno
         if (process.env.DATABASE_URL) {
         this.connectionPool = new this.Pool({
             connectionString: process.env.DATABASE_URL,
             ssl: { rejectUnauthorized: false }
         });
         } else {
-        // Modo desarrollo: tu JSON local
         const data = await fs.readFile(
             path.join(__dirname, "configs/connections.json"),
             "utf8"
@@ -63,10 +64,21 @@ class DataBase {
         const conf = JSON.parse(data).config[0];
         this.connectionPool = new this.Pool(conf);
         }
+
+        // ----- TEST DE CONEXIÓN -----
+        // Intenta sacar un cliente y hacer un simple SELECT
+        const client = await this.connectionPool.connect();
+        await client.query('SELECT NOW()');                // o 'SELECT 1'
+        client.release();
+        console.log('✅ Conexión a la base de datos OK:', new Date());
+        // ----------------------------
+
     } catch (err) {
-        console.error("Error cargando conexión:", err);
+        console.error("❌ Error cargando/conectando a la base de datos:", err);
+        throw err;  // opcional: propagar para que init lo capture
     }
     }
+
 
     getQuery(schema, queryId) {
         if (!this.query || !this.query[schema] || !this.query[schema][queryId]) {
