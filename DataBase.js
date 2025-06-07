@@ -47,13 +47,25 @@ class DataBase {
     }
 
     async loadConnection() {
-        try {
-            const data = await fs.readFile(path.join(__dirname, "configs/connections.json"), 'utf8');
-            this.connection = JSON.parse(data);
-            this.connectionPool = new this.Pool(this.connection.config[0]);
-        } catch (err) {
-            console.error("Error cargando conexión:", err);
+    try {
+        // Si existe DATABASE_URL (Railway), úsala:
+        if (process.env.DATABASE_URL) {
+        this.connectionPool = new this.Pool({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false }
+        });
+        } else {
+        // Modo desarrollo: tu JSON local
+        const data = await fs.readFile(
+            path.join(__dirname, "configs/connections.json"),
+            "utf8"
+        );
+        const conf = JSON.parse(data).config[0];
+        this.connectionPool = new this.Pool(conf);
         }
+    } catch (err) {
+        console.error("Error cargando conexión:", err);
+    }
     }
 
     getQuery(schema, queryId) {
