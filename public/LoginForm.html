@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Inicio de sesion</title>
+        <link rel="stylesheet" href="LoginForm.css">
+
+    </head>
+    <body>
+        <label>Usuario:</label>
+        <input id = "user">
+
+        <label>Contraseña:</label>
+        <input id = "password">
+
+        <label id = "srv-response">Respuesta</label>
+
+        <button onclick="login()">Iniciar sesion</button>
+        <button onclick="logout()">Logout</button>
+
+        <script>
+            let user = document.getElementById("user");
+            let password = document.getElementById("password");
+
+            console.log(user.value);
+            console.log(password.value);
+
+            var login = ()=>{
+                let info = {
+                    userName : user.value,
+                    password : password.value
+                }
+
+                fetch('http://localhost:3000/login',{
+                    method:'post',
+                    body : JSON.stringify(info),
+                    headers:{"Content-Type": "application/json"},
+                    mode: 'cors', 
+                    cache: 'default'
+                })
+                .then(data => {return data.text()})
+                .then(response =>{
+                    let server = document.getElementById("srv-response");
+                    server.value = response;
+                    console.log('respuesta del server:' + server.value);
+                });
+
+            }
+
+            var logout = ()=>{
+                fetch('http://localhost:3000/logout',{method:'post', mode: 'cors', cache: 'default'})
+                .then(data => {return data.text()})
+                .then(r =>{console.log(r);
+                })
+            }
+
+        </script>
+    </body>
+</html>
+

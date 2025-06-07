@@ -1,0 +1,8 @@
+{
+    "config" : [{
+        "database": "notes",
+        "user": "postgres",
+        "password": "1313",
+        "port": 5432
+    }]
+}
