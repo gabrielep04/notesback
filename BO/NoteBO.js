@@ -60,6 +60,8 @@ const NoteBO = class {
     }
 
     async getNotesByFolder(params){
+      console.log("Notes by folder: ", params.folderId);
+      
         try {
             const result = await database.executeQuery("public", "getNotesByFolder", [
               params.folderId
@@ -260,8 +262,11 @@ const NoteBO = class {
     }
 
     async getNotesByUserNotInFolder(params){
+      console.log(params.folderId);
+      
     try {
         const result = await database.executeQuery("public", "getNotesByUserNotInFolder", [
+          params.folderId,
           ss.sessionObject.userId
         ]);
     
@@ -275,6 +280,36 @@ const NoteBO = class {
       } catch (error) {
         console.error("Error en getNotesByUserNotInFolder:", error);
         return { sts: false, msg: "Error al ejecutar la consulta" };
+      }
+    }
+
+    async deleteNoteFromFolder(params) {
+      try {
+        const resultFolder = await database.executeQuery("public", "MoveNoteFromFolder", [params.folderId, params.noteId]);
+        if (resultFolder) {
+          return { sts: true, msg: "Se pudo eliminar la nota de la/s carpeta/s" };
+          console.log("Nota eliminada de la/s carpetas");
+        } else {
+          return { sts: false, msg: "No se pudo eliminar la nota de la/s carpeta/s" };
+        }
+      } catch (error) {
+        console.error("Error en deleteNote:", error);
+        return { sts: false, msg: "Error al eliminar la nota" };
+      }
+    }
+
+    async AddNoteToFolder(params) {
+      try {
+        const resultFolder = await database.executeQuery("public", "AddNoteToFolder", [params.folderId, params.noteId]);
+        if (resultFolder) {
+          return { sts: true, msg: "Se pudo agregar la nota de la/s carpeta/s" };
+          console.log("Nota agregada de la/s carpetas");
+        } else {
+          return { sts: false, msg: "No se pudo eliminar la nota de la/s carpeta/s" };
+        }
+      } catch (error) {
+        console.error("Error en deleteNote:", error);
+        return { sts: false, msg: "Error al eliminar la nota" };
       }
     }
 }

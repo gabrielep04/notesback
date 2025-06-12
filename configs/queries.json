@@ -13,6 +13,8 @@
             "isInFavorites": "SELECT * FROM favorites WHERE fk_id_note = $1 and fk_id_user = $2",
 
             "deleteNoteFromFolder": "DELETE FROM category_note WHERE fk_id_note = $1",
+            "MoveNoteFromFolder": "DELETE FROM category_note WHERE fk_id_category = $1 AND fk_id_note = $2",
+            "AddNoteToFolder": "INSERT INTO public.category_note (fk_id_category, fk_id_note) VALUES ($1, $2)",
             "deleteNoteFromFavs": "DELETE FROM favorites WHERE fk_id_note = $1",
             "addFavorite": "INSERT INTO favorites(fk_id_user, fk_id_note) values($1, $2)",
             "removeFavorite": "DELETE FROM favorites where fk_id_note = $1 and fk_id_user = $2",
@@ -38,7 +40,7 @@
             "deleteNotesByUser": "DELETE FROM notes WHERE fk_id_user = $1",
             "deleteCategoriesByUser": "DELETE FROM categories WHERE fk_id_user = $1",
             "deleteAuditByUser": "DELETE FROM security.audit WHERE fk_id_user = $1",
-            "getNotesByUserNotInFolder": "SELECT n.* FROM notes n LEFT JOIN category_note cn ON n.id_note = cn.fk_id_note WHERE cn.fk_id_category IS NULL AND n.fk_id_user = $1;"
+            "getNotesByUserNotInFolder": "SELECT n.* FROM notes n WHERE n.fk_id_user = $2 AND NOT EXISTS (SELECT 1 FROM category_note cn WHERE cn.fk_id_note = n.id_note AND cn.fk_id_category = $1);"
         },
     "security":
         {
