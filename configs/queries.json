@@ -38,7 +38,7 @@
             "deleteNotesByUser": "DELETE FROM notes WHERE fk_id_user = $1",
             "deleteCategoriesByUser": "DELETE FROM categories WHERE fk_id_user = $1",
             "deleteAuditByUser": "DELETE FROM security.audit WHERE fk_id_user = $1",
-            "getNotesByUserNotInFolder": "SELECT n.* FROM notes n LEFT JOIN category_note cn ON n.id_note = cn.fk_id_note WHERE cn.fk_id_category IS NULL AND n.fk_id_user = 22;"
+            "getNotesByUserNotInFolder": "SELECT n.* FROM notes n LEFT JOIN category_note cn ON n.id_note = cn.fk_id_note WHERE cn.fk_id_category IS NULL AND n.fk_id_user = $1;"
         },
     "security":
         {
