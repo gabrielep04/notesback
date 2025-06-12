@@ -258,6 +258,25 @@ const NoteBO = class {
         return { sts: false, msg: "Error al eliminar las notas" };
       }
     }
+
+    async getNotesByUserNotInFolder(params){
+    try {
+        const result = await database.executeQuery("public", "getNotesByUserNotInFolder", [
+          ss.sessionObject.userId
+        ]);
+    
+        if (!result || !result.rows) {
+          console.error("La consulta no devolvio resultados");
+          return { sts: false, msg: "Error al obtener notas del usuario" };
+        }
+  
+        return { sts: true, data: result.rows };
+
+      } catch (error) {
+        console.error("Error en getNotesByUserNotInFolder:", error);
+        return { sts: false, msg: "Error al ejecutar la consulta" };
+      }
+    }
 }
 
 module.exports = NoteBO;
